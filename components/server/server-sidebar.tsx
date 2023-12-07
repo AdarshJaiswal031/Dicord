@@ -1,12 +1,32 @@
 import { currentProfile } from "@/lib/current-profile";
 import { db } from "@/lib/db";
-import { ChannelType } from "@prisma/client";
+import { ChannelType, MemberRole } from "@prisma/client";
 import { redirect } from "next/navigation";
 import React from "react";
 import ServerHeader from "./server-header";
+import { ScrollArea } from "../ui/scroll-area";
+import { ServerSearch } from "./server-search";
+import { Hash, Mic, ShieldAlert, ShieldCheck, Video } from "lucide-react";
 interface ServerSidbarProps {
   serverId: string;
 }
+
+//ICONS_MAP
+const iconMap = {
+  [ChannelType.TEXT]: <Hash className="mr-2 h-4 w-4" />,
+  [ChannelType.AUDIO]: <Mic className="mr-2 h-4 w-4" />,
+  [ChannelType.VIDEO]: <Video className="mr-2 h-4 w-4" />,
+};
+
+//MEMBER_ROLE_ICON_MAP
+const roleIconMap = {
+  [MemberRole.GUEST]: null,
+  [MemberRole.MODERATOR]: (
+    <ShieldCheck className="mr-2 h-4 w-4 text-indigo-500" />
+  ),
+  [MemberRole.ADMIN]: <ShieldAlert className="mr-2 h-4 w-4 text-indigo-500" />,
+};
+
 const ServerSidebar = async ({ serverId }: ServerSidbarProps) => {
   const profile = await currentProfile();
   if (!profile) {
@@ -60,6 +80,11 @@ const ServerSidebar = async ({ serverId }: ServerSidbarProps) => {
   dark:bg-[#2B2D31] bg-[#F2F3F5]"
     >
       <ServerHeader server={server} role={role} />
+      <ScrollArea className="flex-1 px-3">
+        <div className="mt-2">
+          <ServerSearch />
+        </div>
+      </ScrollArea>
     </div>
   );
 };
